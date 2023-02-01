@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<style>
+
+        .container {
+            position:relative; 
+            top:50px;  
+            display:flex; 
+            justify-content:center;
+            align-items:center; 
+            height:100vh;
+        } 
+
+		.button {
+            text-align: center;
+            background-color: #4CAF50;
+            width:100px; 
+            height:50px; 
+            color:white; 
+            border-radius:20px;
+            background-color:blue;
+        } /* Green */
+
+		</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+    <div class="container">  
+        <button class="button"  onclick="APmode()" >START</button>
+        <button class="button"  style="top:10px;" onclick="APmode()" >AP</button>
+
+            <script>
+                function START() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('PUT', "./home.html");
+                    xhr.send();
+                }
+                function SAP() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('PUT', "./home.html");
+                    xhr.send();
+                }
+        </script>
+    </div>  
+
+</html>
