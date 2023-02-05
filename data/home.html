@@ -4,32 +4,48 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		
 		<style>
+        
+        html { font-family: Helvetica; 
+            display: inline-block;
+             margin: 0px auto; 
+             text-align: center;
+            } 
 
-        .container {
-            position:relative; 
-            top:50px;  
-            display:flex; 
-            justify-content:center;
-            align-items:center; 
-            height:100vh;
-        } 
 
-		.button {
+        h1 {color: #444444;
+            margin: 50px auto 30px;
+            } 
+        h3 {color: #444444;
+            margin-bottom: 70px;
+            }
+
+        .button {display: block;
+            width: 100px;
             text-align: center;
-            background-color: #4CAF50;
-            width:100px; 
-            height:50px; 
-            color:white; 
-            border-radius:20px;
-            background-color:blue;
-        } /* Green */
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 13px 30px;
+            text-decoration: none;
+            font-size: 25px;
+            margin: 0px auto 35px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
 
-		</style>
+	</style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
-    <div class="container">  
-        <button class="button"  onclick="APmode()" >START</button>
-        <button class="button"  style="top:10px;" onclick="APmode()" >AP</button>
+        <h1>ESP8266 Web Server</h1>
+        <h3>Using Access Point(AP) Mode</h3>
+
+
+        <p>Press to set SAP mode</p>
+        <a class="button" href="/control/" role="button">START</a> 
+
+
+        <p>Press to start</p>
+        <a class="button" href="/control/" role="button">START</a> 
 
             <script>
                 function START() {
@@ -43,6 +59,5 @@
                     xhr.send();
                 }
         </script>
-    </div>  
 
 </html>

@@ -92,7 +92,7 @@ struct wifiConfig get_SAPMODE(String filepath)
 
 void home(){
   Serial.println("button pressed");
-  server.send(200, "text/plain", "");
+  server.send(200, "text/plain", );
 
 }
 void setup()
