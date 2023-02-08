@@ -11,7 +11,6 @@ IPAddress gateway(192, 168, 4, 9);
 IPAddress subnet(255, 255, 255, 0);
 
 
-int STBY = 12; //standby
 
 ESP8266WebServer server (80);
 
@@ -23,7 +22,7 @@ struct wifiConfig {
 
 //This function takes the parameters passed in the URL(the x and y coordinates of the joystick)
 //and sets the motor speed based on those parameters.
-void handleJSData() 
+void handleJSData()
 {
   boolean yDir;
   int x = server.arg(0).toInt() * 10;
@@ -48,18 +47,17 @@ void handleJSData()
   //just change the 2 digitalWrite lines for both motors:
   //!ydir would become ydir, and ydir would become !ydir
 
-  /*Serial.print("x=");
-    Serial.print(aSpeed);
-    Serial.print("y=");
-    Serial.println(bSpeed);
-    */
+  Serial.print("x=");
+  Serial.print(aSpeed);
+  Serial.print("y=");
+  Serial.println(bSpeed);
 
-  digitalWrite(STBY, HIGH);
+
   //MotorA
   digitalWrite(AIN1, !yDir);
   digitalWrite(AIN2, yDir);
   analogWrite(PWMA, aSpeed);
-  
+
   //MotorB
   digitalWrite(BIN1, !yDir);
   digitalWrite(BIN2, yDir);
@@ -69,8 +67,9 @@ void handleJSData()
   server.send(200, "text/plain", "");
 }
 
-struct wifiConfig get_SAPMODE(String filepath)
-{ wifiConfig ap;
+struct wifiConfig get_id_pass(String filepath)
+{
+  wifiConfig ap;
   //Serial.println(filepath);
   File file = SPIFFS.open(filepath, "r");
   ap.ssid = file.readStringUntil('\n');
@@ -79,7 +78,7 @@ struct wifiConfig get_SAPMODE(String filepath)
   return ap;
 }
 
-void reset()
+void reset_controller()
 {
   Serial.println("Reset pressed");
   server.send(200, "text/plain", "");
@@ -87,9 +86,8 @@ void reset()
 
 }
 
-void initGpio() 
+void initGpio()
 {
-  pinMode(STBY, OUTPUT);
 
   pinMode(PWMA, OUTPUT);
   pinMode(AIN1, OUTPUT);
@@ -99,95 +97,141 @@ void initGpio()
   pinMode(BIN1, OUTPUT);
   pinMode(BIN2, OUTPUT);
 }
+void getSapdata()
+{
+  String ssid = server.arg(0);
+  String password = server.arg(1);
+  Serial.println(ssid);
+  Serial.println(password);
+  server.send(200, "text/plain", "/home");
 
-void beginWebserver() 
+}
+void beginWebserver()
 {
 
   server.serveStatic("/", SPIFFS, "/home.html");
-  //call handleJSData function when this URL is accessed by the js in the html file
-  server.on("/home.html", reset);
+  server.serveStatic("/sap/", SPIFFS, "/sap.html");
 
+  //call handleJSData function when this URL is accessed by the js in the html file
+  server.on("/home.html", reset_controller);
+  server.on("/action_page", getSapdata);
 
 
   server.serveStatic("/control/", SPIFFS, "/joystick.html");
   server.serveStatic("/control/virtualjoystick.js", SPIFFS, "/virtualjoystick.js");
   //call handleJSData function when this URL is accessed by the js in the html file
   server.on("/control/jsData.html", handleJSData);
+
+
+
+  //server.serveStatic("/", SPIFFS, "/joystick.html");
+  //server.serveStatic("/virtualjoystick.js", SPIFFS, "/virtualjoystick.js");
+  //call handleJSData function when this URL is accessed by the js in the html file
+  //server.on("/jsData.html", handleJSData);
+  
   server.begin();
 
 }
 
-void setup()
-{ 
-  struct wifiConfig apSettings;
+bool filecheck(String filepath) {
+  File check = SPIFFS.open(filepath, "r");
+  return check;
+}
 
-  String ssid = "ESP8266";
-  String password = "123446576543";
-  Serial.begin(115200);
-  delay(2000);
-
-  if (!SPIFFS.begin()) {
-    Serial.println("SPIFFS Mount failed");
-  }
-  else 
-  {
-    Serial.println("SPIFFS Mount succesfull");
-  }
-
-  File ap = SPIFFS.open(APfile, "r");
-  if (!ap) {
-    Serial.println("failed to open SoftAP settings defaulting ssid and password");
-    apSettings.ssid = "Aravind";
-    apSettings.password = "helloboys1";
-  }
-  else {
-    apSettings = get_SAPMODE(APfile);
-    Serial.println("SPIFFS Mount succesfull");
-    delay(2000);
-  }
+void STA_mode(struct wifiConfig apSettings)
+{
+  WiFi.disconnect();
 
   Serial.print("SSID:");
   Serial.println(apSettings.ssid);
   Serial.print("PASSWORD:");
   Serial.println(apSettings.password);
 
-
-
-
+  WiFi.mode(WIFI_AP);
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
-  WiFi.softAP(apSettings.ssid, apSettings.password);
-  Serial.print("Setting soft-AP ... ");
-  Serial.print("Soft-AP IP address = ");
+
+  WiFi.setAutoConnect(false);
+  WiFi.setAutoReconnect(false); // if wifi attempts to (re)connect to a previous router it kills the access point
+
+
+  WiFi.softAP(apSettings.ssid, apSettings.password, 10, false, 1);
+  Serial.print("Setting AP ... ");
+  Serial.print("AP IP address = ");
   Serial.println(WiFi.softAPIP());
+}
 
+void setup()
+{
+  struct wifiConfig apSettings;
+  bool mode_flag = 0;
 
-  /*
+  int retries = 6;
+
+  Serial.begin(115200);
+  delay(2000);
+
+  if (!SPIFFS.begin())
+  {
+    Serial.println("SPIFFS Mount failed");
+    ESP.restart();
+  }
+  else
+  {
+    Serial.println("SPIFFS Mount succesfull");
+  }
+
+  if (!filecheck(SAPfile)) {
+    Serial.println("failed to open SoftAP chnaging mode to AP");
+  }
+  else {
+    Serial.println("running ESP in SoftAP mode");
+    apSettings = get_id_pass(SAPfile);
+    mode_flag = 1;
+    Serial.println("connecting ESP to:");
+    Serial.println(apSettings.ssid);
+    Serial.print("PASSWORD:");
+    Serial.println(apSettings.password);
+    delay(2000);
+    WiFi.disconnect();
+    WiFi.setAutoConnect(true);
+    WiFi.setAutoReconnect(true);
+    WiFi.mode(WIFI_STA);
+
     WiFi.begin(apSettings.ssid, apSettings.password);     //Connect to your WiFi router
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
+    while (WiFi.status() != WL_CONNECTED && retries > 0) {
+      delay(2000);
       Serial.print(".");
-    }*/
+      retries -= 1;
+    }
+    Serial.println();
+    if (retries == 0) {
+      Serial.println("failed to connect to network in SoftAp mode chnaging to ap mode");
+    }
+    else {
+      Serial.println("WiFi connected");
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+    }
 
+  }
 
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());  //IP address assigned to your ESP
+  if (WiFi.status() !=  WL_CONNECTED) {
+    if (!filecheck(APfile) )
+    {
 
-  //set the pins as outputs
-
-  // Debug console
-  //initialize SPIFFS to be able to serve up the static HTML files.
-
-  //  Serial.println("WiFi connected");
-  //  Serial.println("IP address: ");
-  //  Serial.println(WiFi.localIP());
-
-
-  //set the static pages on SPIFFS for the html and js
-
+      Serial.println("failed to open AP and SAP settings defaulting ssid and password");
+      apSettings.ssid = "ESP8266";
+      apSettings.password = "Helloworld";
+      STA_mode(apSettings);
+    }
+    else
+    {
+      apSettings = get_id_pass(APfile);
+      STA_mode(apSettings);
+    }
+  }
   initGpio();
   beginWebserver();
-
-
 }
 
 void loop()

@@ -22,8 +22,22 @@
     <h1>Please enter the SSID and password to connect MotorDriver</h1>
     <form>
         <label for="SSID">First name:</label><br>
-        <input type="text" id="fname" name="fname"><br>
+        <input type="text" id="id" name="ssid"><br>
         <label for="password">Last name:</label><br>
-        <input type="text" id="lname" name="lname">
+        <input type="text" id="password" name="password"><br><br>
+        <input type="button" onclick="SAP()" href="/" value="submit">
+        <input type="reset">
     </form>
+
+    <p>Press to go back home</p>
+    <a class="button" href="/" role="button">HOME</a> 
+    
+    <script>
+            function SAP() {
+                var xhr = new XMLHttpRequest();
+                xhr.open('PUT', "./action?ssid="+id+"&password"+password);
+                xhr.send();
+                location.replace("/");
+                }
+    </script>
 </html>
