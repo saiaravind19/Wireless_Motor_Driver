@@ -1,3 +1,15 @@
+/*
+
+mode in home page has to be dynamic
+SAP mode page on sunbmit it should ask connect or not
+rewrite ssid and password text file and if the system is in sta mode reset the controller.
+list of ssid and password saved should be more than 1 or not
+Show the ssid and password being used currently.
+home  in joystic.html page
+
+*/
+
+
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include <ESP8266WiFi.h>
@@ -99,11 +111,13 @@ void initGpio()
 }
 void getSapdata()
 {
+  Serial.println(server.args());
+  
   String ssid = server.arg(0);
   String password = server.arg(1);
   Serial.println(ssid);
   Serial.println(password);
-  server.send(200, "text/plain", "/home");
+  server.send(200, "text/plain", "");
 
 }
 void beginWebserver()
@@ -114,21 +128,15 @@ void beginWebserver()
 
   //call handleJSData function when this URL is accessed by the js in the html file
   server.on("/home.html", reset_controller);
-  server.on("/action_page", getSapdata);
+  //Handle on sap HTML page
+  server.on("/sap/sap.html", getSapdata);
+  //server.on("/sap/action_page", getSapdata);
 
 
   server.serveStatic("/control/", SPIFFS, "/joystick.html");
   server.serveStatic("/control/virtualjoystick.js", SPIFFS, "/virtualjoystick.js");
   //call handleJSData function when this URL is accessed by the js in the html file
   server.on("/control/jsData.html", handleJSData);
-
-
-
-  //server.serveStatic("/", SPIFFS, "/joystick.html");
-  //server.serveStatic("/virtualjoystick.js", SPIFFS, "/virtualjoystick.js");
-  //call handleJSData function when this URL is accessed by the js in the html file
-  //server.on("/jsData.html", handleJSData);
-  
   server.begin();
 
 }

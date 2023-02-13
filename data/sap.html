@@ -13,31 +13,47 @@
         h1 {color: #444444;
             margin: 50px auto 30px;
             } 
-        h3 {color: #444444;
-            margin-bottom: 70px;
-            }
+        .button {display: block;
+            width: 100px;
+            text-align: center;
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 13px 30px;
+            text-decoration: none;
+            font-size: 25px;
+            margin: 0px auto 35px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
 	</style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
+    <body>
+
     <h1>Please enter the SSID and password to connect MotorDriver</h1>
-    <form>
-        <label for="SSID">First name:</label><br>
-        <input type="text" id="id" name="ssid"><br>
-        <label for="password">Last name:</label><br>
-        <input type="text" id="password" name="password"><br><br>
-        <input type="button" onclick="SAP()" href="/" value="submit">
+    <form id="sap_data">
+        <label for="SSID">SSID:</label><br>
+        <input type="text" name="ssid"><br>
+        <label for="password">PASSWORD:</label><br>
+        <input type="text" name="password"><br>
+        <input type="button" onclick="SAP()"  value="submit">
         <input type="reset">
     </form>
 
     <p>Press to go back home</p>
-    <a class="button" href="/" role="button">HOME</a> 
-    
+    <a class=".button" href="/" role="button">HOME</a> 
     <script>
             function SAP() {
+                var a = document.getElementById("sap_data").elements[0].value;
+                var b = document.getElementById("sap_data").elements[1].value;
                 var xhr = new XMLHttpRequest();
-                xhr.open('PUT', "./action?ssid="+id+"&password"+password);
+                xhr.open('PUT', "./sap.html?ssid="+a+"&password="+b);
                 xhr.send();
                 location.replace("/");
                 }
     </script>
+    </body>
+
 </html>
