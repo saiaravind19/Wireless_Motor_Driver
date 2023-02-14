@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<style>
+        
+        html { 
+            font-family: Helvetica; 
+            display: inline-block;
+            margin: 0px auto; 
+            text-align: center;
+            } 
+
+
+        h1 {
+            color: #444444;
+            margin: 50px auto 30px;
+            } 
+        h3 {
+            color: #444444;
+            margin-bottom: 70px;
+            }
+
+        .button 
+        {
+            display: block;
+            width: 100px;
+            text-align: center;
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 13px 30px;
+            text-decoration: none;
+            font-size: 25px;
+            margin: 0px auto 35px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+	</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+        <h1>SAP MODE</h1>
+        
+        <p>Press to add new wifi crediantials</p>
+        <a class="button" href="/sap_home/form/" role="button">NEW</a> 
+        
+        <p>Press to connect to network</p>
+        <a class="button" href="/" role="button"  onclick="RESET()" >CONNECT</a> 
+        
+        <p>Press to view existing crediantials</p>
+        <a class="button" href="/" role="button">VIEW</a> 
+
+        <p>Press to go back to home</p>
+        <a class="button" href="/" role="button">HOME</a> 
+
+        <script>
+        function RESET() 
+        {
+            location.replace("/");
+            var xhr = new XMLHttpRequest();
+            xhr.open('PUT', "./home.html");
+            xhr.send();
+
+        }
+    </script>
+
+
+</html>

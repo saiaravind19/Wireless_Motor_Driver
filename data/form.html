@@ -14,14 +14,14 @@
             margin: 50px auto 30px;
             } 
         .button {display: block;
-            width: 100px;
+            width: 80px;
             text-align: center;
             background-color: #3498db;
             border: none;
             color: white;
-            padding: 13px 30px;
+            padding: 13px 20px;
             text-decoration: none;
-            font-size: 25px;
+            font-size: 13px;
             margin: 0px auto 35px;
             cursor: pointer;
             border-radius: 4px;
@@ -38,20 +38,20 @@
         <input type="text" name="ssid"><br>
         <label for="password">PASSWORD:</label><br>
         <input type="text" name="password"><br>
-        <input type="button" onclick="SAP()"  value="submit">
-        <input type="reset">
+        <input type="button" onclick="SAP()"  value="submit"  margin-top: 20px>
+        <input type="reset"  margin-top: 20px>
     </form>
 
     <p>Press to go back home</p>
-    <a class=".button" href="/" role="button">HOME</a> 
+    <a class="button" href="/" role="button">HOME</a> 
     <script>
             function SAP() {
                 var a = document.getElementById("sap_data").elements[0].value;
                 var b = document.getElementById("sap_data").elements[1].value;
                 var xhr = new XMLHttpRequest();
-                xhr.open('PUT', "./sap.html?ssid="+a+"&password="+b);
+                xhr.open('PUT', "./form.html?ssid="+a+"&password="+b);
                 xhr.send();
-                location.replace("/");
+                location.replace("/sap_home/");
                 }
     </script>
     </body>

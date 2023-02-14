@@ -1,11 +1,11 @@
 /*
 
-mode in home page has to be dynamic
-SAP mode page on sunbmit it should ask connect or not
-rewrite ssid and password text file and if the system is in sta mode reset the controller.
-list of ssid and password saved should be more than 1 or not
-Show the ssid and password being used currently.
-home  in joystic.html page
+  mode in home page has to be dynamic
+  SAP mode page on sunbmit it should ask connect or not
+  rewrite ssid and password text file and if the system is in sta mode reset the controller.
+  list of ssid and password saved should be more than 1 or not
+  Show the ssid and password being used currently.
+  home  in joystic.html page
 
 */
 
@@ -109,31 +109,60 @@ void initGpio()
   pinMode(BIN1, OUTPUT);
   pinMode(BIN2, OUTPUT);
 }
+
+void writeToFile(String id, String pass)
+{ String t_location = "/wifi/temp.txt";
+  File temp = SPIFFS.open(t_location, "w");
+  if (!temp) {
+    Serial.println("Error opening file for writing");
+    return;
+  }
+  else
+  {
+    temp.println(id);
+    temp.println(pass);
+  }
+  if (filecheck(SAPfile))
+  {
+    SPIFFS.remove(SAPfile);
+    if (filecheck(t_location)) {
+
+      SPIFFS.rename(t_location, SAPfile);
+    }
+
+  }
+  SPIFFS.gc();
+
+}
+
 void getSapdata()
 {
   Serial.println(server.args());
-  
+
   String ssid = server.arg(0);
   String password = server.arg(1);
   Serial.println(ssid);
   Serial.println(password);
   server.send(200, "text/plain", "");
+  writeToFile(ssid, password);
 
 }
 void beginWebserver()
 {
 
   server.serveStatic("/", SPIFFS, "/home.html");
-  server.serveStatic("/sap/", SPIFFS, "/sap.html");
+  server.serveStatic("/sap_home/", SPIFFS, "/sap_home.html");
+  server.serveStatic("/sap_home/form/", SPIFFS, "/form.html");
+  server.serveStatic("/control/", SPIFFS, "/joystick.html");
+
+
 
   //call handleJSData function when this URL is accessed by the js in the html file
   server.on("/home.html", reset_controller);
   //Handle on sap HTML page
-  server.on("/sap/sap.html", getSapdata);
-  //server.on("/sap/action_page", getSapdata);
+  server.on("/sap_home/form/form.html", getSapdata);
 
 
-  server.serveStatic("/control/", SPIFFS, "/joystick.html");
   server.serveStatic("/control/virtualjoystick.js", SPIFFS, "/virtualjoystick.js");
   //call handleJSData function when this URL is accessed by the js in the html file
   server.on("/control/jsData.html", handleJSData);
@@ -148,7 +177,8 @@ bool filecheck(String filepath) {
 
 void STA_mode(struct wifiConfig apSettings)
 {
-  WiFi.disconnect();
+  
+  WiFi.disconnect(true);
 
   Serial.print("SSID:");
   Serial.println(apSettings.ssid);
@@ -174,6 +204,8 @@ void setup()
   bool mode_flag = 0;
 
   int retries = 6;
+
+  WiFi.disconnect(true);
 
   Serial.begin(115200);
   delay(2000);

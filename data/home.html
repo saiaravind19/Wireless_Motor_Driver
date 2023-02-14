@@ -41,7 +41,7 @@
 
         <p>Press to set SAP mode</p>
 
-        <a class="button" href="/sap/" role="button">SAP</a> 
+        <a class="button" href="/sap_home/" role="button">SAP</a> 
         
         <p>Press to start</p>
         <a class="button" href="/control/" role="button">START</a> 
@@ -49,8 +49,8 @@
         <p>Press to restart ESP</p>
         <a class="button" onclick="RESET()" role="button">RESET</a> 
 
-            <script>
-                function RESET() {
+        <script>
+        function RESET() {
                     var xhr = new XMLHttpRequest();
                     xhr.open('PUT', "./home.html");
                     xhr.send();
