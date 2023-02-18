@@ -1,15 +1,3 @@
-/*
-
-  mode in home page has to be dynamic
-  SAP mode page on sunbmit it should ask connect or not
-  rewrite ssid and password text file and if the system is in sta mode reset the controller.
-  list of ssid and password saved should be more than 1 or not
-  Show the ssid and password being used currently.
-  home  in joystic.html page
-
-*/
-
-
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include <ESP8266WiFi.h>
