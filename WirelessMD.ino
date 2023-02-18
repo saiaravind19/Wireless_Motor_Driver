@@ -112,7 +112,7 @@ void initGpio()
 
 void writeToFile(String id, String pass)
 { String t_location = "/wifi/temp.txt";
-  File temp = SPIFFS.open(t_location, "w");
+  File temp = SPIFFS.open(SAPfile, "w");
   if (!temp) {
     Serial.println("Error opening file for writing");
     return;
@@ -147,27 +147,57 @@ void getSapdata()
   writeToFile(ssid, password);
 
 }
-void beginWebserver()
+
+void sapHome()
 {
 
-  server.serveStatic("/", SPIFFS, "/home.html");
-  server.serveStatic("/sap_home/", SPIFFS, "/sap_home.html");
-  server.serveStatic("/sap_home/form/", SPIFFS, "/form.html");
+  struct wifiConfig wifiSettings;
+  String reset_controller = server.arg(0);
+
+
+  if (reset_controller == "yes")
+  {
+    server.send(200, "text/plain", "");
+    ESP.restart();
+
+  }
+}
+
+void beginWebserver(bool mode_flag)
+{
+  if (mode_flag == 1)
+  {
+    server.serveStatic("/", SPIFFS, "/home.html");
+    server.serveStatic("/ap_home/", SPIFFS, "/ap_home.html");
+    server.serveStatic("/ap_home/view/", SPIFFS, "/displayap.html");
+
+    //call handleJSData function when this URL is accessed by the js in the html file
+    server.on("/home.html", reset_controller);
+    server.on("/ap_home/ap_home.html", sapHome);
+
+  }
+  else
+  {
+
+    server.serveStatic("/", SPIFFS, "/homeap.html");
+    server.serveStatic("/sap_home/", SPIFFS, "/sap_home.html");
+    server.serveStatic("/sap_home/form/", SPIFFS, "/form.html");
+    server.serveStatic("/sap_home/view/", SPIFFS, "/displaysap.html");
+
+
+    //call handleJSData function when this URL is accessed by the js in the html file
+    server.on("/homeap.html", reset_controller);
+    server.on("/sap_home/form/form.html", getSapdata);
+    server.on("/sap_home/sap_home.html", sapHome);
+
+  }
+
   server.serveStatic("/control/", SPIFFS, "/joystick.html");
-
-
-
-  //call handleJSData function when this URL is accessed by the js in the html file
-  server.on("/home.html", reset_controller);
-  //Handle on sap HTML page
-  server.on("/sap_home/form/form.html", getSapdata);
-
 
   server.serveStatic("/control/virtualjoystick.js", SPIFFS, "/virtualjoystick.js");
   //call handleJSData function when this URL is accessed by the js in the html file
   server.on("/control/jsData.html", handleJSData);
   server.begin();
-
 }
 
 bool filecheck(String filepath) {
@@ -177,7 +207,7 @@ bool filecheck(String filepath) {
 
 void STA_mode(struct wifiConfig apSettings)
 {
-  
+
   WiFi.disconnect(true);
 
   Serial.print("SSID:");
@@ -203,9 +233,9 @@ void setup()
   struct wifiConfig apSettings;
   bool mode_flag = 0;
 
-  int retries = 6;
+  int retries = 30;
 
-  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
 
   Serial.begin(115200);
   delay(2000);
@@ -226,20 +256,19 @@ void setup()
   else {
     Serial.println("running ESP in SoftAP mode");
     apSettings = get_id_pass(SAPfile);
-    mode_flag = 1;
-    Serial.println("connecting ESP to:");
-    Serial.println(apSettings.ssid);
+    Serial.print("connecting ESP to:");
+    Serial.print(apSettings.ssid);
     Serial.print("PASSWORD:");
-    Serial.println(apSettings.password);
-    delay(2000);
-    WiFi.disconnect();
-    WiFi.setAutoConnect(true);
-    WiFi.setAutoReconnect(true);
-    WiFi.mode(WIFI_STA);
+    Serial.print(apSettings.password);
 
-    WiFi.begin(apSettings.ssid, apSettings.password);     //Connect to your WiFi router
+    delay(2000);
+
+    //WiFi.mode(WIFI_STA);
+
+    //WiFi.begin(id,pass);     //Connect to your WiFi router
+    WiFi.begin(apSettings.ssid.c_str(),apSettings.password.c_str());     //Connect to your WiFi router
     while (WiFi.status() != WL_CONNECTED && retries > 0) {
-      delay(2000);
+      delay(1000);
       Serial.print(".");
       retries -= 1;
     }
@@ -248,6 +277,7 @@ void setup()
       Serial.println("failed to connect to network in SoftAp mode chnaging to ap mode");
     }
     else {
+      mode_flag = 1;
       Serial.println("WiFi connected");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
@@ -271,7 +301,7 @@ void setup()
     }
   }
   initGpio();
-  beginWebserver();
+  beginWebserver(mode_flag);
 }
 
 void loop()

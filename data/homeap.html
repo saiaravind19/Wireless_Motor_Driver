@@ -37,11 +37,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
         <h1>ESP8266 Web Server</h1>
-        <h3>Using Access Point(SAP) Mode</h3>
+        <h3>Using Access Point(STA) Mode</h3>
 
-        <p>Press to set AP mode</p>
+        <p>Press to set SAP mode</p>
 
-        <a class="button" href="/ap_home/" role="button">AP</a> 
+        <a class="button" href="/sap_home/" role="button">SAP</a> 
         
         <p>Press to start</p>
         <a class="button" href="/control/" role="button">START</a> 
@@ -52,7 +52,7 @@
         <script>
         function RESET() {
                     var xhr = new XMLHttpRequest();
-                    xhr.open('PUT', "./home.html");
+                    xhr.open('PUT', "./homeap.html");
                     xhr.send();
                 }
         </script>

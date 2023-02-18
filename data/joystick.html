@@ -4,7 +4,8 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		
 		<style>
-		body {
+
+body {
 			overflow	: hidden;
 			padding		: 0;
 			margin		: 0;
@@ -32,8 +33,23 @@
 			margin		: 0;
 			-webkit-user-select	: none;
 			-moz-user-select	: none;
-		}		
-		</style>
+		}	
+        .button {display: block;
+            width: 60px;
+            text-align: center;
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 12px 15px;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 4px;
+			position:absolute;
+     		top:0;
+     		right:0;
+        }
+	
+	</style>
 
 	</head>
 	<body>
@@ -43,7 +59,11 @@
 			Touch the screen and move
 			<br/>
 			<span id="result"></span>
-		</div> 
+		</div>
+		<div class="button">
+			<a class="button" href="/" role="button">HOME</a>
+		</div>
+
 		<script src="./virtualjoystick.js"></script>
 		<script>
 			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
