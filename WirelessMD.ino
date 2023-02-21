@@ -215,7 +215,30 @@ void STA_mode(struct wifiConfig apSettings)
   Serial.print("AP IP address = ");
   Serial.println(WiFi.softAPIP());
 }
+void wait_for_dns() {
+  while (1) {
+    delay(1000);
+    Serial.println("[ERROR] MDNS responder did not setup for ap mode ");
+  }
+}
+void set_dns()
+{
 
+  if (WiFi.getMode() == WIFI_AP) {
+    if (!MDNS.begin("wirelessmd", WiFi.softAPIP())) {
+      Serial.println("[ERROR] MDNS responder did not setup for ap mode ");
+      wait_for_dns();
+    }
+    MDNS.addService("http", "tcp", 80);
+  }
+  else {
+    if (!MDNS.begin("wirelessmd")) {
+      Serial.println("[ERROR] MDNS responder did not setup STA mode");
+      wait_for_dns();
+    }
+  }
+
+}
 void setup()
 {
   struct wifiConfig apSettings;
@@ -254,7 +277,7 @@ void setup()
     //WiFi.mode(WIFI_STA);
 
     //WiFi.begin(id,pass);     //Connect to your WiFi router
-    WiFi.begin(apSettings.ssid.c_str(),apSettings.password.c_str());     //Connect to your WiFi router
+    WiFi.begin(apSettings.ssid.c_str(), apSettings.password.c_str());    //Connect to your WiFi router
     while (WiFi.status() != WL_CONNECTED && retries > 0) {
       delay(1000);
       Serial.print(".");
@@ -288,11 +311,17 @@ void setup()
       STA_mode(apSettings);
     }
   }
+
+  set_dns();
   initGpio();
   beginWebserver(mode_flag);
 }
 
 void loop()
 {
+
+  MDNS.update();
+
   server.handleClient();
+
 }
