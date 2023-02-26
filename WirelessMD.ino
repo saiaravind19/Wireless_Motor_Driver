@@ -101,6 +101,13 @@ void initGpio()
 void writeToFile(String id, String pass)
 { String t_location = "/wifi/temp.txt";
   File temp = SPIFFS.open(SAPfile, "w");
+  Serial.print("id length:");
+  Serial.println(id.length());
+
+
+  Serial.print("password length:");
+  Serial.println(pass.length());
+
   if (!temp) {
     Serial.println("Error opening file for writing");
     return;
@@ -108,17 +115,19 @@ void writeToFile(String id, String pass)
   else
   {
     temp.println(id);
+    //temp.print(',');
     temp.println(pass);
+    temp.close();
   }
-  if (filecheck(SAPfile))
-  {
-    SPIFFS.remove(SAPfile);
-    if (filecheck(t_location)) {
-
-      SPIFFS.rename(t_location, SAPfile);
-    }
-
-  }
+  //  if (filecheck(SAPfile))
+  //  {
+  //    SPIFFS.remove(SAPfile);
+  //    if (filecheck(t_location)) {
+  //
+  //      SPIFFS.rename(t_location, SAPfile);
+  //    }
+  //
+  //  }
   SPIFFS.gc();
 
 }
@@ -127,8 +136,8 @@ void getSapdata()
 {
   Serial.println(server.args());
 
-  String ssid = server.arg(0);
-  String password = server.arg(1);
+  String ssid = server.arg("ssid");
+  String password = server.arg("password");
   Serial.println(ssid);
   Serial.println(password);
   server.send(200, "text/plain", "");
@@ -156,29 +165,35 @@ void beginWebserver(bool mode_flag)
   if (mode_flag == 1)
   {
     server.serveStatic("/", SPIFFS, "/home.html");
-    server.serveStatic("/ap_home/", SPIFFS, "/ap_home.html");
-    server.serveStatic("/ap_home/view/", SPIFFS, "/displayap.html");
 
     //call handleJSData function when this URL is accessed by the js in the html file
     server.on("/home.html", reset_controller);
-    server.on("/ap_home/ap_home.html", sapHome);
 
   }
   else
   {
 
     server.serveStatic("/", SPIFFS, "/homeap.html");
+
+    //call handleJSData function when this URL is accessed by the js in the html file
+    server.on("/homeap.html", reset_controller);
+
+  }
+    server.serveStatic("/mode/", SPIFFS, "/mode.html");
+
+    server.serveStatic("/ap_home/", SPIFFS, "/ap_home.html");
+    server.serveStatic("/ap_home/view/", SPIFFS, "/displayap.html");
+
     server.serveStatic("/sap_home/", SPIFFS, "/sap_home.html");
     server.serveStatic("/sap_home/form/", SPIFFS, "/form.html");
     server.serveStatic("/sap_home/view/", SPIFFS, "/displaysap.html");
 
 
-    //call handleJSData function when this URL is accessed by the js in the html file
-    server.on("/homeap.html", reset_controller);
+
+    server.on("/ap_home/ap_home.html", sapHome);
     server.on("/sap_home/form/form.html", getSapdata);
     server.on("/sap_home/sap_home.html", sapHome);
 
-  }
 
   server.serveStatic("/control/", SPIFFS, "/joystick.html");
 
@@ -196,7 +211,7 @@ bool filecheck(String filepath) {
 void STA_mode(struct wifiConfig apSettings)
 {
 
-  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
 
   Serial.print("SSID:");
   Serial.println(apSettings.ssid);
@@ -206,8 +221,8 @@ void STA_mode(struct wifiConfig apSettings)
   WiFi.mode(WIFI_AP);
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
-  WiFi.setAutoConnect(false);
-  WiFi.setAutoReconnect(false); // if wifi attempts to (re)connect to a previous router it kills the access point
+  //WiFi.setAutoConnect(false);
+  //WiFi.setAutoReconnect(false); // if wifi attempts to (re)connect to a previous router it kills the access point
 
 
   WiFi.softAP(apSettings.ssid, apSettings.password, 10, false, 1);
@@ -220,6 +235,7 @@ void wait_for_dns() {
     delay(1000);
     Serial.println("[ERROR] MDNS responder did not setup for ap mode ");
   }
+
 }
 void set_dns()
 {
@@ -237,17 +253,14 @@ void set_dns()
       wait_for_dns();
     }
   }
-
 }
+
 void setup()
 {
   struct wifiConfig apSettings;
   bool mode_flag = 0;
-
   int retries = 30;
-
   WiFi.mode(WIFI_OFF);
-
   Serial.begin(115200);
   delay(2000);
 
@@ -274,7 +287,7 @@ void setup()
 
     delay(2000);
 
-    //WiFi.mode(WIFI_STA);
+    WiFi.mode(WIFI_STA);
 
     //WiFi.begin(id,pass);     //Connect to your WiFi router
     WiFi.begin(apSettings.ssid.c_str(), apSettings.password.c_str());    //Connect to your WiFi router
@@ -319,9 +332,7 @@ void setup()
 
 void loop()
 {
-
   MDNS.update();
-
   server.handleClient();
 
 }
