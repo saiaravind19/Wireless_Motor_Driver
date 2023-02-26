@@ -221,8 +221,8 @@ void STA_mode(struct wifiConfig apSettings)
   WiFi.mode(WIFI_AP);
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
-  //WiFi.setAutoConnect(false);
-  //WiFi.setAutoReconnect(false); // if wifi attempts to (re)connect to a previous router it kills the access point
+  WiFi.setAutoConnect(false);
+  WiFi.setAutoReconnect(false); // if wifi attempts to (re)connect to a previous router it kills the access point
 
 
   WiFi.softAP(apSettings.ssid, apSettings.password, 10, false, 1);
