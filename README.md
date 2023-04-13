@@ -15,12 +15,12 @@
 
 | Controller Gpio  | MotorDriver pin|
 | ------ | ------ |
-|    D1    | En1       |
+|    D1    | EN1       |
 |    D5    | IN1       |
 |    D6   | IN2       |
-|    D2    | En2       |
+|    D2    | EN2       |
 |    D7    | IN3       |
 |    D8   | IN4       |
-|    D3    | (L1-led)       |
-|    D0    | (L2-led)       |
+|    D3    | L1-led       |
+|    D0    | L2-led       |
 
