@@ -9,6 +9,7 @@
   -  _**Note:Make sure data folder is present in current working directory.**_
 - Use spiffs files uploader to flash the HTML UI to ESP. To upload navigate to Tools>ESP8266 Sketch Data Upload.
 - Wait for the files to upload once the files are uploaded, compile and upload the program.
+     - _**Note:Once the files are uploaded no need to reupload each time of code updae.**_ 
 
 ## Pinout Connections
 
