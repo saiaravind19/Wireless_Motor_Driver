@@ -6,6 +6,20 @@
 
 ## Installation
 - Clone the repo to the system  and open the project in Arduino IDE.
-  -  _Note:Make sure data folder is present in current working directory._
+  -  _**Note:Make sure data folder is present in current working directory.**_
 - Use spiffs files uploader to flash the HTML UI to ESP. To upload navigate to Tools>ESP8266 Sketch Data Upload.
 - Wait for the files to upload once the files are uploaded, compile and upload the program.
+
+## Pinout Connections
+
+| Controller Gpio  | MotorDriver pin|
+| ------ | ------ |
+|    D1    | En1       |
+|    D5    | IN1       |
+|    D6   | IN2       |
+|    D2    | En2       |
+|    D7    | IN3       |
+|    D8   | IN4       |
+|    D3    | (L1-led)       |
+|    D0    | (L2-led)       |
+
