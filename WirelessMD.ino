@@ -67,6 +67,13 @@ void handleJSData()
   server.send(200, "text/plain", "");
 }
 
+
+void stopDriver(){
+  analogWrite(PWMA, 0);
+  analogWrite(PWMB, 0);  
+}
+
+
 struct wifiConfig get_id_pass(String filepath)
 {
   wifiConfig ap;
@@ -119,15 +126,6 @@ void writeToFile(String id, String pass)
     temp.println(pass);
     temp.close();
   }
-  //  if (filecheck(SAPfile))
-  //  {
-  //    SPIFFS.remove(SAPfile);
-  //    if (filecheck(t_location)) {
-  //
-  //      SPIFFS.rename(t_location, SAPfile);
-  //    }
-  //
-  //  }
   SPIFFS.gc();
 
 }
@@ -145,54 +143,54 @@ void getSapdata()
 
 }
 
-void sapHome()
+void apconnect()
+{
+  if (WiFi.getMode() != WIFI_AP)
+  {
+    server.stop();
+    set_apmode();
+    beginWebserver(1);
+  }
+}
+
+void staconnect()
 {
 
-  struct wifiConfig wifiSettings;
-  String reset_controller = server.arg(0);
-
-
-  if (reset_controller == "yes")
-  {
-    server.send(200, "text/plain", "");
-    ESP.restart();
-
+  if (WiFi.getMode() != WIFI_STA) {
+    server.stop();
+    set_stamode();
+    beginWebserver(1);
   }
+
 }
 
 void beginWebserver(bool mode_flag)
 {
-  if (mode_flag == 1)
-  {
-    server.serveStatic("/", SPIFFS, "/home.html");
 
-    //call handleJSData function when this URL is accessed by the js in the html file
-    server.on("/home.html", reset_controller);
+  set_dns();
+  initGpio();
 
-  }
-  else
-  {
+  server.serveStatic("/", SPIFFS, "/home.html");
 
-    server.serveStatic("/", SPIFFS, "/homeap.html");
+  //call handleJSData function when this URL is accessed by the js in the html file
+  server.on("/home.html", reset_controller);
 
-    //call handleJSData function when this URL is accessed by the js in the html file
-    server.on("/homeap.html", reset_controller);
+  server.serveStatic("/mode/", SPIFFS, "/mode.html");
 
-  }
-    server.serveStatic("/mode/", SPIFFS, "/mode.html");
-
-    server.serveStatic("/ap_home/", SPIFFS, "/ap_home.html");
-    server.serveStatic("/ap_home/view/", SPIFFS, "/displayap.html");
-
-    server.serveStatic("/sap_home/", SPIFFS, "/sap_home.html");
-    server.serveStatic("/sap_home/form/", SPIFFS, "/form.html");
-    server.serveStatic("/sap_home/view/", SPIFFS, "/displaysap.html");
+  server.serveStatic("/ap_home/", SPIFFS, "/ap_home.html");
 
 
+  server.serveStatic("/ap_home/view/", SPIFFS, "/displayap.html");
+  server.serveStatic("/sap_home/view/", SPIFFS, "/displaysap.html");
 
-    server.on("/ap_home/ap_home.html", sapHome);
-    server.on("/sap_home/form/form.html", getSapdata);
-    server.on("/sap_home/sap_home.html", sapHome);
+
+  server.serveStatic("/sap_home/", SPIFFS, "/sap_home.html");
+  server.serveStatic("/sap_home/form/", SPIFFS, "/form.html");
+
+
+  server.on("/ap_home/ap_home.html", apconnect);
+  server.on("/sap_home/form/form.html", getSapdata);
+  server.on("/sap_home/sap_home.html", staconnect);
 
 
   server.serveStatic("/control/", SPIFFS, "/joystick.html");
@@ -204,11 +202,10 @@ void beginWebserver(bool mode_flag)
 }
 
 bool filecheck(String filepath) {
-  File check = SPIFFS.open(filepath, "r");
-  return check;
+  return SPIFFS.exists(filepath);
 }
 
-void STA_mode(struct wifiConfig apSettings)
+void AP_mode(struct wifiConfig apSettings)
 {
 
   WiFi.mode(WIFI_OFF);
@@ -230,6 +227,7 @@ void STA_mode(struct wifiConfig apSettings)
   Serial.print("AP IP address = ");
   Serial.println(WiFi.softAPIP());
 }
+
 void wait_for_dns() {
   while (1) {
     delay(1000);
@@ -237,6 +235,7 @@ void wait_for_dns() {
   }
 
 }
+
 void set_dns()
 {
 
@@ -245,6 +244,8 @@ void set_dns()
       Serial.println("[ERROR] MDNS responder did not setup for ap mode ");
       wait_for_dns();
     }
+    else Serial.println("DNS server successfully created for AP mode");
+    
     MDNS.addService("http", "tcp", 80);
   }
   else {
@@ -252,14 +253,82 @@ void set_dns()
       Serial.println("[ERROR] MDNS responder did not setup STA mode");
       wait_for_dns();
     }
+    else  Serial.println("DNS server successfully created for STA mode");
   }
 }
 
-void setup()
+
+void set_apmode()
+{
+  struct wifiConfig apSettings;
+
+  if (!filecheck(APfile) )
+  {
+
+    Serial.println("failed to open AP and SAP settings defaulting ssid and password");
+    apSettings.ssid = "ESP8266";
+    apSettings.password = "Helloworld";
+    AP_mode(apSettings);
+  }
+  else
+  {
+    apSettings = get_id_pass(APfile);
+    AP_mode(apSettings);
+  }
+
+}
+
+
+bool set_stamode()
 {
   struct wifiConfig apSettings;
   bool mode_flag = 0;
   int retries = 30;
+
+  Serial.println("running ESP in SoftAP mode");
+  apSettings = get_id_pass(SAPfile);
+  Serial.print("connecting ESP to:");
+  Serial.print(apSettings.ssid);
+  Serial.print("PASSWORD:");
+  Serial.print(apSettings.password);
+
+  delay(2000);
+
+  WiFi.mode(WIFI_STA);
+
+  WiFi.setAutoConnect(true);
+  WiFi.setAutoReconnect(true); // if wifi attempts to (re)connect to a previous router it kills the access point
+
+
+  //WiFi.begin(id,pass);     //Connect to your WiFi router
+  WiFi.begin(apSettings.ssid.c_str(), apSettings.password.c_str());    //Connect to your WiFi router
+  while (WiFi.status() != WL_CONNECTED && retries > 0) {
+    delay(1000);
+    Serial.print(".");
+    retries -= 1;
+  }
+  Serial.println();
+  if (retries == 0) {
+    Serial.println("failed to connect to network in SoftAp mode chnaging to ap mode");
+  }
+  else {
+    mode_flag = 1;
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+  }
+  //set ap mode if sta mode is failed
+  if (WiFi.status() !=  WL_CONNECTED) {
+    set_apmode();
+  }
+
+  return mode_flag;
+}
+
+
+void setup()
+{
+  bool mode_flag = 0;
   WiFi.mode(WIFI_OFF);
   Serial.begin(115200);
   delay(2000);
@@ -275,58 +344,14 @@ void setup()
   }
 
   if (!filecheck(SAPfile)) {
-    Serial.println("failed to open SoftAP chnaging mode to AP");
+    Serial.println("failed to open SoftAP changing mode to AP");
   }
   else {
-    Serial.println("running ESP in SoftAP mode");
-    apSettings = get_id_pass(SAPfile);
-    Serial.print("connecting ESP to:");
-    Serial.print(apSettings.ssid);
-    Serial.print("PASSWORD:");
-    Serial.print(apSettings.password);
 
-    delay(2000);
-
-    WiFi.mode(WIFI_STA);
-
-    //WiFi.begin(id,pass);     //Connect to your WiFi router
-    WiFi.begin(apSettings.ssid.c_str(), apSettings.password.c_str());    //Connect to your WiFi router
-    while (WiFi.status() != WL_CONNECTED && retries > 0) {
-      delay(1000);
-      Serial.print(".");
-      retries -= 1;
-    }
-    Serial.println();
-    if (retries == 0) {
-      Serial.println("failed to connect to network in SoftAp mode chnaging to ap mode");
-    }
-    else {
-      mode_flag = 1;
-      Serial.println("WiFi connected");
-      Serial.println("IP address: ");
-      Serial.println(WiFi.localIP());
-    }
-
+    mode_flag = set_stamode();
   }
 
-  if (WiFi.status() !=  WL_CONNECTED) {
-    if (!filecheck(APfile) )
-    {
 
-      Serial.println("failed to open AP and SAP settings defaulting ssid and password");
-      apSettings.ssid = "ESP8266";
-      apSettings.password = "Helloworld";
-      STA_mode(apSettings);
-    }
-    else
-    {
-      apSettings = get_id_pass(APfile);
-      STA_mode(apSettings);
-    }
-  }
-
-  set_dns();
-  initGpio();
   beginWebserver(mode_flag);
 }
 
