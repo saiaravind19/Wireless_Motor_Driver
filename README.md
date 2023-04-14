@@ -26,4 +26,4 @@
 
 ## Accessing UI
 - In case using ESP as Access point(AP mode) connect to the network SSID mentioned in the file **data>wifi>ap.txt** present in the working directory.
-- Open your favourite web browser and tyrp **wirelessmd.local** and the UI pops up in he browser and you are ready to control the motors wirelessely.
+- Open your favourite web browser and type **wirelessmd.local** and the UI pops up in the browser and you are ready to control the motors wirelessely.
