@@ -27,3 +27,10 @@
 ## Accessing UI
 - In case using ESP as Access point(AP mode) connect to the network SSID mentioned in the file **data>wifi>ap.txt** present in the working directory.
 - Open your favourite web browser and type **wirelessmd.local** and the UI pops up in the browser and you are ready to control the motors wirelessely.
+
+## Hardare
+  All of the schematic and board layout files are present in this folder. The PCB was designed using KiCAD 6.0 version.
+The board is based upon the popular Dual Full Bridge Motor Driver L298N and the miniature wireless microntroller development board Wemos D1 mini. The PCB can output nearly 1.2A per channel. Since it has the Wemos D1 mini on board, it gives the user the capability to control the motors wwirelessly using our unique GUI.
+
+- WirelessMD/Hardware/KiCAD Project - Contains the KiCAD Project File 
+- WirelessMD/Hardware/WirelessMD_sch.pdf - Schematic of Wireless Motor Driver PCB
