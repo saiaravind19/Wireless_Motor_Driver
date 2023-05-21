@@ -1,7 +1,19 @@
 ## Wireless Motor Driver ##
-<img align=centre src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/Robot.jpg" width =450 title="Wireless Motor Driver"/> 
 
-## Prerequisites
+<p float="left">
+<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/Robot.jpg" width =60%  height= 420 title="Wireless Motor Driver"/> 
+     
+<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/WirelessMD.jpg" width =24%  height= 420 title="Wireless Motor Driver"/> 
+</p>
+
+
+
+
+
+
+
+
+## Prerequisites 
 - Make sure you install one of the [supported version](https://www.arduino.cc/en/software/OldSoftwareReleases) of Arduino IDE and have ESP8266 core installed.
      - Package is tested with Arduino IDE v 1.8.5  <-> plugin v 0.5.0 so it is recommended to use the same.
 - To install [Spiffs files uploader](https://github.com/me-no-dev/arduino-esp32fs-plugin) please follow installation tutorials provided in the tutorial.
