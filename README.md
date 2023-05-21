@@ -3,7 +3,7 @@
 <p float="left">
 <img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/Robot.jpg" width =60%  height= 420 title="Wireless Motor Driver"/> 
      
-<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/WirelessMD.jpg" width =24%  height= 420 title="Wireless Motor Driver"/> 
+<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/WirelessMD.jpg" width =25%  height= 420 title="Wireless Motor Driver"/> 
 </p>
 
 
