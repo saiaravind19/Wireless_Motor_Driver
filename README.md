@@ -1,3 +1,6 @@
+## Wireless Motor Driver ##
+<img align=centre src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/Robot.jpg" width =450 title="Wireless Motor Driver"/> 
+
 ## Prerequisites
 - Make sure you install one of the [supported version](https://www.arduino.cc/en/software/OldSoftwareReleases) of Arduino IDE and have ESP8266 core installed.
      - Package is tested with Arduino IDE v 1.8.5  <-> plugin v 0.5.0 so it is recommended to use the same.
