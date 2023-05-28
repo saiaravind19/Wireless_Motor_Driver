@@ -1,5 +1,10 @@
 ## Wireless Motor Driver ##
 
+Motor Drivers are popular among Robotics/ Hardware Enthusiasts to build various cool projects. One of the most popular among them is the L298N motor driver. Conventionally, we use the motor driver, a bunch of wires and connect it to our microcontroller to control different actuators. But in our version of the Motor Driver, we have  made it into a one stop solution by removing the excess of wires and connecing the Wemos DI mini microcontroller, all in one single PCB!
+
+Wemos D1 mini was chosen for it WiFi functionality. We have our own GUI through which the motor driver can be controlled. One of the main objective of making this Motor Driver was to reduce the time to prototype projects and also to make your bots completely wireless. You can simply connect the motors and control it via your mobile through WiFi. That's how simple it is!
+
+
 <p float="left">
 <img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/Robot.jpg" width =60%  height= 420 title="Wireless Motor Driver"/> 
      
