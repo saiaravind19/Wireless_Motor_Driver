@@ -12,6 +12,11 @@ Wemos D1 mini was chosen for it WiFi functionality. We have our own GUI through 
 </p>
 
 
+## Specifications
+- Supply Voltage: 6 - 12V
+- Output Current: 1.2A (max)
+- 500mA Fuse Protection for Wemos D1 mini
+- Can be used separately as a conventional L298N Motor Driver as well
 
 
 
