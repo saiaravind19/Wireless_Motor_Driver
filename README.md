@@ -6,9 +6,9 @@ Wemos D1 mini was chosen for it WiFi functionality. We have our own GUI through 
 
 
 <p float="left">
-<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/Robot.jpg" width =60%  height= 420 title="Wireless Motor Driver"/> 
+<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/Robot.jpg" width =62%  height= 420 title="Wireless Motor Driver"/> 
      
-<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/WirelessMD.jpg" width =25%  height= 420 title="Wireless Motor Driver"/> 
+<img src="https://github.com/saiaravind19/WirelessMD/blob/main/Hardware/images/WirelessMD.jpg" width =35%  height= 420 title="Wireless Motor Driver"/> 
 </p>
 
 
