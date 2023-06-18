@@ -59,3 +59,10 @@ The board is based upon the popular Dual Full Bridge Motor Driver L298N and the 
 
 - WirelessMD/Hardware/KiCAD Project - Contains the KiCAD Project File 
 - WirelessMD/Hardware/WirelessMD_sch.pdf - Schematic of Wireless Motor Driver PCB
+
+## Demo Video
+
+https://github.com/saiaravind19/WirelessMD/assets/73806646/1ec77462-335a-4383-b794-b8709d903f12
+
+
+
